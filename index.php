@@ -1,4 +1,15 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) session_start();
+
+if ( ! array_key_exists('loginok', $_SESSION) || $_SESSION['loginok'] != 1 )
+{
+	header("Location:login.php");
+}
+elseif ( array_key_exists("action",$_POST) && $_POST["action"] == "logout" )
+{
+	session_destroy();
+	header("Location: login.php");
+}
 
 ?>
 
@@ -24,20 +35,17 @@
 				<p>Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile-first projects on the web.</p> 
 			</div>
 		</div>
-		<form class="form-vertical">
-			<div class="form-group">
-				<label for="email">Email address:</label>
-				<input type="email" class="form-control" id="email">
-			</div>
-			<div class="form-group">
-				<label for="pwd">Password:</label>
-				<input type="password" class="form-control" id="pwd">
-			</div>
-			<div class="checkbox">
-				<label><input type="checkbox"> Remember me</label>
-			</div>
-			<button type="submit" class="btn btn-default">Submit</button>
-		</form>
+		<div class="container">
+			<span>
+			<?php
+			echo $_SESSION['username'];
+			?>
+			<form method="POST" action="">
+				<input type="hidden" name="action" value="logout">
+				<button type="submit" class="btn btn-danger">Sair</button>
+			</form>
+			</span>
+		</div>
 	</div>
   </body>
 </html>

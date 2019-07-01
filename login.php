@@ -1,0 +1,82 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) session_start();
+
+include("db.php");
+
+if ( array_key_exists('loginok', $_SESSION) && $_SESSION['loginok'] == 1 )
+{
+	header("Location:index.php");
+}
+
+if ( array_key_exists("action",$_POST) && $_POST["action"] == "login" )
+{
+	$username = (array_key_exists("username",$_POST) ? $_POST["username"] : "");
+	$password = (array_key_exists("password",$_POST) ? $_POST["password"] : "");
+	if ( login($username,$password) )
+	{
+		$_SESSION['loginok'] = 1;
+		$_SESSION['username'] = $username;
+		header("Location:index.php");
+	}	
+	
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="/static/jquery.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+	<div class="container">
+		<div class="container">
+			<div class="jumbotron">
+				<h1>Bootstrap Tutorial</h1> 
+				<p>Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile-first projects on the web.</p> 
+			</div>
+		</div>
+		<form class="form-vertical" action="" method="POST" onsubmit="return form_submit()">
+			<div class="form-group">
+				<label for="userame">Username:</label>
+				<input type="text" class="form-control" name="username" id="username">
+			</div>
+			<div class="form-group">
+				<label for="password">Password:</label>
+				<input type="password" class="form-control" name="password" id="password">
+			</div>
+			<input type="hidden" name="action" value="login">
+			<button type="submit" class="btn btn-success">Submit</button>
+		</form>
+	</div>
+  </body>
+  <script>
+  function form_submit()
+  {
+	  if ( $("#username").val() == "")
+	  {
+		  $("#username").parent().addClass("has-warning");
+		  $("#username").parent().addClass("has-feedback");
+		  $("#username").focus();
+		  return false;
+	  }
+	  if ( $("#password").val() == "")
+	  {
+		  $("#password").parent().addClass("has-warning");
+		  $("#password").parent().addClass("has-feedback");
+		  $("#password").focus();
+		  return false;
+	  }
+	  return true;
+  }
+  </script>
+</html>

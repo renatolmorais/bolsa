@@ -3,22 +3,19 @@ if (session_status() == PHP_SESSION_NONE) session_start();
 
 include("db.php");
 
-if ( array_key_exists('loginok', $_SESSION) && $_SESSION['loginok'] == 1 )
+if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 {
-	header("Location:index.php");
-}
-
-if ( array_key_exists("action",$_POST) && $_POST["action"] == "login" )
-{
-	$username = (array_key_exists("username",$_POST) ? $_POST["username"] : "");
-	$password = (array_key_exists("password",$_POST) ? $_POST["password"] : "");
-	if ( login($username,$password) )
+	if ( array_key_exists("action",$_POST) && $_POST["action"] == "login" )
 	{
-		$_SESSION['loginok'] = 1;
-		$_SESSION['username'] = $username;
-		header("Location:index.php");
-	}	
-	
+		$username = (array_key_exists("username",$_POST) ? $_POST["username"] : "");
+		$password = (array_key_exists("password",$_POST) ? $_POST["password"] : "");
+		if ( login($username,$password) )
+		{
+			$_SESSION['loginok'] = 1;
+			$_SESSION['username'] = $username;
+			header("Location:index.php");
+		}	
+	}
 }
 
 ?>
@@ -45,7 +42,7 @@ if ( array_key_exists("action",$_POST) && $_POST["action"] == "login" )
 				<p>Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile-first projects on the web.</p> 
 			</div>
 		</div>
-		<form class="form-vertical" action="" method="POST" onsubmit="return form_submit()">
+		<form class="form-vertical" action="" method="POST" onsubmit="return validate()">
 			<div class="form-group">
 				<label for="userame">Username:</label>
 				<input type="text" class="form-control" name="username" id="username">
@@ -60,7 +57,7 @@ if ( array_key_exists("action",$_POST) && $_POST["action"] == "login" )
 	</div>
   </body>
   <script>
-  function form_submit()
+  function validate()
   {
 	  if ( $("#username").val() == "")
 	  {

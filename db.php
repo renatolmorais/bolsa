@@ -2,6 +2,21 @@
 #include('/usr/share/sgar/web/lib/postgres.php');
 include_once('senhas.php');
 
+function login($username,$password)
+{
+	$retval = false;
+	$conn = connect();
+	$result = pg_query($conn,"select password,salt from usuario where username = '$username'");
+	if($result)
+	{
+		$row = pg_fetch_assoc($result);
+		var_dump($row);
+		var_dump(password_hash($password,PASSWORD_BCRYPT,array( "salt" => $row["salt"])));
+		if (password_hash($password,PASSWORD_BCRYPT,array( "salt" => $row["salt"])) == $row["password"]) $retval = true;
+	}
+	return $retval;
+}
+
 function adaptContentsScrow($contents){
 	mb_regex_encoding('UTF-8');
 	$contents=mb_eregi_replace("[\n\r]"," ",$contents);
@@ -49,9 +64,6 @@ function adaptContents($contents,$maxsize="57",$maxlines="2",$onlysize=false){
 		}
 		$finalstring.=$lines[$maxlines-1]." ...";
 	}
-#	if(mb_strlen($contents)>51){
-#		$contents = mb_substr($contents,0,51)."\n".mb_substr($contents,51,51);
-#	}
 	return $finalstring;
 }
 
@@ -76,7 +88,7 @@ function decodeReuniaoCodigoParaApi($status){
 function connect(){
 	if($GLOBALS['my_pg_conn'] === FALSE){
 		$credenciais=getCredenciaisBanco();
-		$GLOBALS['my_pg_conn'] = pg_connect("dbname=log user=$credenciais[usuario] password=$credenciais[senha]");
+		$GLOBALS['my_pg_conn'] = pg_connect("dbname=system user=$credenciais[usuario] password=$credenciais[senha]");
 #		echo "CRIADO.";
 		if($GLOBALS['my_pg_conn'] === FALSE) {
 			echo "Sem conexao";

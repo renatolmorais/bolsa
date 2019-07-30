@@ -25,14 +25,15 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
   <head>
     <meta charset="utf-8"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="pragma" content="no-cache">
 	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
 
 	<!-- jQuery library -->
-	<script src="/static/jquery.js"></script>
+	<script src="/static/jquery-3.4.1.js"></script>
 
 	<!-- Latest compiled JavaScript -->
-	<script src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.js"></script>
   </head>
   <body>
 	<div class="container">
@@ -52,7 +53,10 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 				<input type="password" class="form-control" name="password" id="password">
 			</div>
 			<input type="hidden" name="action" value="login">
-			<button type="submit" class="btn btn-success">Submit</button>
+			<div class="btn-group btn-group-sm">
+				<button type="submit" class="btn btn-success">Entrar</button>
+				<button class="btn btn-primary" onclick="window.location.assign('register.php')">Novo usuário</a></button>
+			</div>
 		</form>
 	</div>
   </body>

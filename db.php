@@ -2,6 +2,49 @@
 #include('/usr/share/sgar/web/lib/postgres.php');
 include_once('senhas.php');
 
+function connect(){
+	if($GLOBALS['my_pg_conn'] === FALSE){
+		$credenciais=getCredenciaisBanco();
+		$GLOBALS['my_pg_conn'] = pg_connect("dbname=system user=$credenciais[usuario] password=$credenciais[senha]");
+#		echo "CRIADO.";
+		if($GLOBALS['my_pg_conn'] === FALSE) {
+			echo "Sem conexao";
+		}
+		pg_query($GLOBALS['my_pg_conn'],"BEGIN;");
+	}
+#	echo "VALOR:";var_dump($GLOBALS['my_pg_conn']);
+	return $GLOBALS['my_pg_conn'];
+}
+
+function create_token()
+{
+	$token = substr(md5(microtime()),0,22);
+	$conn = connect();
+	$result = pg_query_params($conn,"insert into api_busca (token,used,created_at) values ($1,$2,$3)", array($token,'N',date("c")) );
+	commit();
+	return $token;
+}
+
+function update_token($token)
+{
+	$conn = connect();
+	$result = pg_query_params($conn,"update api_busca set used = 'Y',used_at = $1 where token = '$token'", array(date("c")));
+	commit();
+}
+
+function is_token_valid($token)
+{
+	$conn = connect();
+	$result = pg_query($conn,"select * from api_busca where token = '$token'");
+	if($result)
+	{
+		$row = pg_fetch_assoc($result);
+		$used = $row["used"];
+		if ($used == 'N') return true;
+	}
+	return false;
+}
+
 function login($username,$password)
 {
 	$retval = false;
@@ -10,11 +53,32 @@ function login($username,$password)
 	if($result)
 	{
 		$row = pg_fetch_assoc($result);
-		var_dump($row);
-		var_dump(password_hash($password,PASSWORD_BCRYPT,array( "salt" => $row["salt"])));
 		if (password_hash($password,PASSWORD_BCRYPT,array( "salt" => $row["salt"])) == $row["password"]) $retval = true;
 	}
 	return $retval;
+}
+
+function insert_new_user($username,$name,$password)
+{
+	$retval = false;
+	$conn = connect();
+	$salt = substr(md5(microtime()),0,22);
+	$result = pg_query_params($conn, 'INSERT INTO usuario (username,name,password,salt) values ($1,$2,$3,$4);', array($username,$name,password_hash($password,PASSWORD_BCRYPT,array( "salt" => $salt)),$salt));
+	if ($result) $retval = true;
+	commit();
+	return $retval;
+}
+
+function user_exists($username)
+{
+	$conn = connect();
+	$result = pg_query($conn,"select * from usuario where username = '$username'");
+	if($result)
+	{
+		$row = pg_fetch_assoc($result);
+		if($row) return true;
+	}
+	return false;
 }
 
 function adaptContentsScrow($contents){
@@ -83,20 +147,6 @@ function decodeReuniaoCodigoParaApi($status){
 	case 'N':
 		return 5;
 	}
-}
-
-function connect(){
-	if($GLOBALS['my_pg_conn'] === FALSE){
-		$credenciais=getCredenciaisBanco();
-		$GLOBALS['my_pg_conn'] = pg_connect("dbname=system user=$credenciais[usuario] password=$credenciais[senha]");
-#		echo "CRIADO.";
-		if($GLOBALS['my_pg_conn'] === FALSE) {
-			echo "Sem conexao";
-		}
-		pg_query($GLOBALS['my_pg_conn'],"BEGIN;");
-	}
-#	echo "VALOR:";var_dump($GLOBALS['my_pg_conn']);
-	return $GLOBALS['my_pg_conn'];
 }
 
 function commit(){

@@ -18,14 +18,15 @@ elseif ( array_key_exists("action",$_POST) && $_POST["action"] == "logout" )
   <head>
     <meta charset="utf-8"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="pragma" content="no-cache">
 	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
 
 	<!-- jQuery library -->
-	<script src="/static/jquery.js"></script>
+	<script src="/static/jquery-3.4.1.js"></script>
 
 	<!-- Latest compiled JavaScript -->
-	<script src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.js"></script>
   </head>
   <body>
 	<div class="container">

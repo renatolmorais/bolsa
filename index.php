@@ -27,6 +27,12 @@ elseif ( array_key_exists("action",$_POST) && $_POST["action"] == "logout" )
 
 	<!-- Latest compiled JavaScript -->
 	<script src="/static/bootstrap/js/bootstrap.js"></script>
+	
+	<script src="/static/jquery-ui/jquery-ui.min.js"></script>
+	<script src="/static/jtable/jquery.jtable.min.js"></script>
+	<link href="/static/jquery-ui/jquery-ui.theme.css" rel="stylesheet" type="text/css" />
+	<link href="/static/jtable/themes/metro/blue/jtable.min.css" rel="stylesheet" type="text/css" />
+
   </head>
   <body>
 	<div class="container">
@@ -37,16 +43,63 @@ elseif ( array_key_exists("action",$_POST) && $_POST["action"] == "logout" )
 			</div>
 		</div>
 		<div class="container">
-			<span>
-			<?php
-			echo $_SESSION['username'];
-			?>
+			<span>Seja bem-vindo, <?php	echo $_SESSION['username'];	?></span>
 			<form method="POST" action="">
 				<input type="hidden" name="action" value="logout">
 				<button type="submit" class="btn btn-danger">Sair</button>
 			</form>
-			</span>
+		</div>
+		<div class="container">
+			<div id="jt_main"></div>
 		</div>
 	</div>
   </body>
+  <script>
+    $(document).ready(function () {
+        $('#jt_main').jtable({
+            title: 'Investimentos',
+            actions: {
+                listAction: '/api/list.php',
+				createAction: '/api/create.php'
+            },
+            fields: {
+                id: {
+                    key: true,
+                    list: false
+                },
+                data: {
+                    title: 'Data'
+                },
+                operacao: {
+                    title: 'Operação',
+					options: [{Value:"1",DisplayText:"COMPRA"},{Value:"2",DisplayText:"VENDA"}],
+                },
+                codigo: {
+                    title: 'Código'
+                },
+				quantidade: {
+					title: 'Quantidade'
+				},
+				preco: {
+					title: 'Preço'
+				},
+				valor: {
+					title: 'Valor',
+					display: function(data) {
+						return data.record.preco * data.record.quantidade;
+					}
+				},
+				corretagem: {
+					title: "Corretagem",
+					display: function(data) {
+						return 0.005 * data.record.valor;
+					},
+					create: false,
+					edit: false,
+				}
+			}
+		});
+		$("#jt_main").jtable("load");
+    });
+  </script>
 </html>

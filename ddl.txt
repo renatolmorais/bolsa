@@ -1,0 +1,18 @@
+data corretora operacao codigo quantidade preço valor(preço x quantidade) corretagem(0,8) emolumentos(0,005%xvalor) liquidação(0,0275%xvalor)
+
+CREATE TABLE operacoes
+(
+  id serial NOT NULL,
+  data timestamp with time zone NOT NULL,
+  operacao character varying(10) NOT NULL,
+  codigo character(10) varying NOT NULL,
+  quantidade integer NOT NULL,
+  preco decimal NOT NULL,
+  valor decimal NOT NULL,
+  CONSTRAINT operacoes_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE api_busca
+  OWNER TO postgres;

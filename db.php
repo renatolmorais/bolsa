@@ -16,6 +16,49 @@ function connect(){
 	return $GLOBALS['my_pg_conn'];
 }
 
+function get_operacoes($username)
+{
+	$conn = connect();
+	$result = pg_query($conn,"SELECT * FROM operacoes join usuario on operacoes.id_usuario = usuario.id where username = '$username' order by data desc;");
+	//Add all records to an array
+	$rows = array();
+	while($row = pg_fetch_assoc($result)) $rows[] = $row;
+ 	//Return result to jTable
+	$jTableResult = array();
+	$jTableResult['Result'] = "OK";
+	$jTableResult['Records'] = $rows;
+	return json_encode($jTableResult);
+}
+
+function insert_operacoes($info = array())
+{
+	$conn = connect();
+	$info["username"] = get_user_id($info["username"]);
+	$query = "insert into operacoes (data,operacao,codigo,quantidade,preco,valor,id_usuario) values ($1,$2,$3,$4,$5,$6,$7)";
+	pg_query_params($conn,$query,$info);
+	commit();
+	$result = pg_query("SELECT * FROM operacoes order by id desc limit 1");
+	$row = pg_fetch_assoc($result);
+ 
+	//Return result to jTable
+	$jTableResult = array();
+	$jTableResult['Result'] = "OK";
+	$jTableResult['Record'] = $row;
+	return json_encode($jTableResult);
+}
+
+function get_user_id($username)
+{
+	$conn = connect();
+	$result = pg_query($conn,"select id from usuario where username = '$username';");
+	if($result)
+	{
+		$row = pg_fetch_assoc($result);
+		return $row["id"];
+	}
+	return "";
+}
+
 function create_token()
 {
 	$token = substr(md5(microtime()),0,22);
@@ -49,11 +92,15 @@ function login($username,$password)
 {
 	$retval = false;
 	$conn = connect();
-	$result = pg_query($conn,"select password,salt from usuario where username = '$username'");
+	$result = pg_query($conn,"select id,password,salt from usuario where username = '$username'");
 	if($result)
 	{
 		$row = pg_fetch_assoc($result);
-		if (password_hash($password,PASSWORD_BCRYPT,array( "salt" => $row["salt"])) == $row["password"]) $retval = true;
+		if (password_hash($password,PASSWORD_BCRYPT,array( "salt" => $row["salt"])) == $row["password"]) 
+		{
+			$retval = true;
+			$GLOBALS['uid'] = $row['id'];
+		}
 	}
 	return $retval;
 }

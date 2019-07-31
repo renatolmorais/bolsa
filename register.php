@@ -116,7 +116,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 	  $("#username").focusout(
 		function()
 		{
-			$.get(
+			$.post(
 				"/api.php",
 				{"action":"get_user","username":$("#username").val(),"token":"<?php echo $token ?>"},
 				function(data)

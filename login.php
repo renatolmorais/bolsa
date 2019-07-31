@@ -2,6 +2,7 @@
 if (session_status() == PHP_SESSION_NONE) session_start();
 
 include("db.php");
+$show_modal = false;
 
 if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 {
@@ -13,8 +14,11 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 		{
 			$_SESSION['loginok'] = 1;
 			$_SESSION['username'] = $username;
+			$_SESSION['uid'] = $GLOBALS['uid'];
 			header("Location:index.php");
-		}	
+			$show_modal = false;
+		}
+		else $show_modal = true;
 	}
 }
 
@@ -58,6 +62,24 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 				<button class="btn btn-primary" onclick="window.location.assign('register.php')">Novo usuário</a></button>
 			</div>
 		</form>
+		<button id="modal-button" style="display:none" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Error</button>
+		<div id="myModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+			<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<p><h3>Atenção!</h3></p>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<p id="alert"></p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default btn-success" data-dismiss="modal">Fechar</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
   </body>
   <script>
@@ -79,5 +101,17 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 	  }
 	  return true;
   }
+  function show_modal(message)
+  {
+	  $("#alert").text(message);
+	  $("#modal-button").trigger("click");
+  }
+	<?php if ($show_modal)
+	{?>
+		show_modal("Usuário ou senha incorretos!");
+	<?php
+	}
+	$show_modal = false;
+	?>
   </script>
 </html>

@@ -16,10 +16,22 @@ function connect(){
 	return $GLOBALS['my_pg_conn'];
 }
 
-function get_operacoes($username)
+function get_quant_operacoes()
 {
 	$conn = connect();
-	$result = pg_query($conn,"SELECT * FROM operacoes join usuario on operacoes.id_usuario = usuario.id where username = '$username' order by data desc;");
+	$query = 'select count(*) FROM operacoes';
+	$result = pg_query($conn,$query);
+	$row = pg_fetch_assoc($result);
+	$count = $row['count'];
+	return $count;
+}
+
+function get_operacoes($username,$jtStartIndex = 0,$jtPageSize = 10)
+{
+	$conn = connect();
+	#$query = "select date(data),operacao,codigo,quantidade,preco,valor,round(valor*0.00005,2) as emolumentos,round(valor*0.0000275,2) as liquidacao from operacoes join usuario on operacoes.id_usuario = usuario.id where username = '$username' order by data desc;";
+	$query = "select operacoes.id,data,operacao,codigo,quantidade,preco,valor,round(valor*0.00005,2) as emolumentos,round(valor*0.0000275,2) as liquidacao from operacoes join usuario on operacoes.id_usuario = usuario.id where username = '$username' order by data desc limit $jtPageSize offset $jtStartIndex;";
+	$result = pg_query($conn,$query);
 	//Add all records to an array
 	$rows = array();
 	while($row = pg_fetch_assoc($result)) $rows[] = $row;
@@ -27,6 +39,7 @@ function get_operacoes($username)
 	$jTableResult = array();
 	$jTableResult['Result'] = "OK";
 	$jTableResult['Records'] = $rows;
+	$jTableResult['TotalRecordCount'] = get_quant_operacoes();
 	return json_encode($jTableResult);
 }
 
@@ -45,6 +58,38 @@ function insert_operacoes($info = array())
 	$jTableResult['Result'] = "OK";
 	$jTableResult['Record'] = $row;
 	return json_encode($jTableResult);
+}
+
+function update_operacoes($info = array())
+{
+	//Update record in database
+	//$result = mysql_query("UPDATE people SET Name = '" . $_POST["Name"] . "', Age = " . $_POST["Age"] . " WHERE PersonId = " . $_POST["PersonId"] . ";");
+	$info["username"] = get_user_id($info["username"]);
+	$conn = connect();
+	$query = "UPDATE operacoes SET data = '$info[data]', operacao = '$info[oper]', codigo = '$info[codigo]', quantidade = $info[quant], preco = $info[preco], valor = $info[valor] WHERE id = $info[id] and id_usuario = $info[username];";
+	$result = pg_query($conn,$query);
+	commit();
+ 
+	//Return result to jTable
+	$jTableResult = array();
+	$jTableResult['Result'] = "OK";
+	print json_encode($jTableResult);
+}
+
+function delete_operacoes($info = array())
+{
+	//Update record in database
+	//$result = mysql_query("UPDATE people SET Name = '" . $_POST["Name"] . "', Age = " . $_POST["Age"] . " WHERE PersonId = " . $_POST["PersonId"] . ";");
+	$info["username"] = get_user_id($info["username"]);
+	$conn = connect();
+	$query = "delete from operacoes WHERE id = $info[id] and id_usuario = $info[username];";
+	$result = pg_query($conn,$query);
+	commit();
+ 
+	//Return result to jTable
+	$jTableResult = array();
+	$jTableResult['Result'] = "OK";
+	print json_encode($jTableResult);
 }
 
 function get_user_id($username)

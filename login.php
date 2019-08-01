@@ -38,6 +38,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 
 	<!-- Latest compiled JavaScript -->
 	<script src="/static/bootstrap/js/bootstrap.js"></script>
+	<title>Entrar</title>
   </head>
   <body>
 	<div class="container">

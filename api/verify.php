@@ -1,23 +1,23 @@
 <?php
 if (session_status() == PHP_SESSION_NONE) session_start();
 
-include("db.php");
+include("../db.php");
 
 $method = $_SERVER["REQUEST_METHOD"];
 
 switch($method)
 {
-	case 'POST':
-		if ( array_key_exists("token",$_POST) )
+	case 'GET':
+		if ( array_key_exists("token",$_REQUEST) )
 		{
-			$token = $_POST["token"];
+			$token = $_REQUEST["token"];
 			if ( ! is_token_valid($token) ) header("HTTP/1.0 403 Forbidden");
 			else
 			{
 				update_token($token);
-				if ( array_key_exists('action',$_POST) && $_POST['action'] == 'get_user' )
+				if ( array_key_exists('action',$_REQUEST) && $_REQUEST['action'] == 'get_user' )
 				{	
-					$username = (array_key_exists("username",$_POST) ? $_POST["username"] : "");
+					$username = (array_key_exists("username",$_REQUEST) ? $_REQUEST["username"] : "");
 					if ( user_exists($username) ) 
 					{
 						echo json_encode(
@@ -39,19 +39,11 @@ switch($method)
 				}
 			}
 		}
-		elseif ( array_key_exists('loginok', $_SESSION) && $_SESSION['loginok'] == 1 )
-		{
-			//var_dump($_REQUEST);
-			echo get_operacoes($_SESSION["username"]);
-		}
 		else header("HTTP/1.0 403 Forbidden");
 		break;
-	case 'GET':
-		break;
+	case 'POST':
 	case 'PUT':
-		break;
 	case 'DELETE':
-		break;
 	default:
 		header("HTTP/1.0 403 Forbidden");
 		break;

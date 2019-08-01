@@ -116,9 +116,13 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 	  $("#username").focusout(
 		function()
 		{
-			$.post(
-				"/api.php",
-				{"action":"get_user","username":$("#username").val(),"token":"<?php echo $token ?>"},
+			$.get(
+				"/api/verify.php",
+				{
+					"action":"get_user",
+					"username":$("#username").val(),
+					"token":"<?php echo $token ?>"
+				},
 				function(data)
 				{
 					if (data.status_code == "200")

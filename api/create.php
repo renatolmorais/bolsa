@@ -13,9 +13,9 @@ if ( array_key_exists('loginok', $_SESSION) && $_SESSION['loginok'] == 1 )
 		$info = array(
 					"data" => $_POST["data"],
 					"oper" => $_POST["operacao"],
-					"codigo" => $_POST["codigo"],
-					"quant" => $_POST["quantidade"],
-					"preco" => $_POST["preco"],
+					"codigo" => strtoupper($_POST["codigo"]),
+					"quant" => intval($_POST["quantidade"]),
+					"preco" => floatval($_POST["preco"]),
 					"valor" => floatval($_POST["quantidade"]) * floatval($_POST["preco"]),
 					"username" => $_SESSION["username"]
 					);

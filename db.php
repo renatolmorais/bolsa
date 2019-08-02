@@ -26,6 +26,16 @@ function get_quant_operacoes()
 	return $count;
 }
 
+function get_quant_carteira()
+{
+	$conn = connect();
+	$query = 'select count(*) FROM carteira';
+	$result = pg_query($conn,$query);
+	$row = pg_fetch_assoc($result);
+	$count = $row['count'];
+	return $count;
+}
+
 function get_operacoes($username,$jtStartIndex = 0,$jtPageSize = 10)
 {
 	$conn = connect();
@@ -90,6 +100,23 @@ function delete_operacoes($info = array())
 	$jTableResult = array();
 	$jTableResult['Result'] = "OK";
 	print json_encode($jTableResult);
+}
+
+function get_carteira($username,$jtStartIndex = 0,$jtPageSize = 10)
+{
+	$conn = connect();
+	#$query = "select date(data),operacao,codigo,quantidade,preco,valor,round(valor*0.00005,2) as emolumentos,round(valor*0.0000275,2) as liquidacao from operacoes join usuario on operacoes.id_usuario = usuario.id where username = '$username' order by data desc;";
+	$query = "select carteira.id,codigo,quantidade from carteira join usuario on carteira.id_usuario = usuario.id where usuario.username = '$username' order by carteira.id limit $jtPageSize offset $jtStartIndex;";
+	$result = pg_query($conn,$query);
+	//Add all records to an array
+	$rows = array();
+	while($row = pg_fetch_assoc($result)) $rows[] = $row;
+ 	//Return result to jTable
+	$jTableResult = array();
+	$jTableResult['Result'] = "OK";
+	$jTableResult['Records'] = $rows;
+	$jTableResult['TotalRecordCount'] = get_quant_carteira();
+	return json_encode($jTableResult);
 }
 
 function get_user_id($username)

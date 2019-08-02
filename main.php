@@ -1,4 +1,6 @@
-<?php ?>
+<?php 
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +21,7 @@
 	<script src="/static/jtable/jquery.jtable.min.js"></script>
 	<link href="/static/jquery-ui/jquery-ui.theme.css" rel="stylesheet" type="text/css" />
 	<link href="/static/jtable/themes/metro/blue/jtable.min.css" rel="stylesheet" type="text/css" />
-	<title>Principal</title>
+	<title><?php echo get_title(); ?></title>
 	<!-- tabelas -->
 	<script src="/static/carteira.js"></script>
 	<script src="/static/operacoes.js"></script>

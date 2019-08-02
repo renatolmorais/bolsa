@@ -1,5 +1,7 @@
 <?php
 
+require("config.php");
+
 if (session_status() == PHP_SESSION_NONE) session_start();
 
 if ( array_key_exists("action",$_POST) && $_POST["action"] == "logout" )

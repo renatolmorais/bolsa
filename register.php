@@ -1,6 +1,7 @@
 <?php
 if (session_status() == PHP_SESSION_NONE) session_start();
 
+require("config.php");
 include("db.php");
 
 //generate search token_get_all
@@ -42,7 +43,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 	<!-- Latest compiled JavaScript -->
 	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/static/validate.js"></script>
-	<title>Register</title>
+	<title><?php echo get_title(); ?></title>
   </head>
   <body>
 	<div class="container">

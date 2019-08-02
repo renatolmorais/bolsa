@@ -1,7 +1,9 @@
 <?php
 if (session_status() == PHP_SESSION_NONE) session_start();
 
+require("config.php");
 include("db.php");
+
 $show_modal = false;
 
 if ( $_SERVER['REQUEST_METHOD'] == 'POST')
@@ -38,7 +40,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST')
 
 	<!-- Latest compiled JavaScript -->
 	<script src="/static/bootstrap/js/bootstrap.js"></script>
-	<title>Entrar</title>
+	<title><?php echo get_title(); ?></title>
   </head>
   <body>
 	<div class="container">

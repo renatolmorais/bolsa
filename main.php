@@ -31,8 +31,8 @@
 	<div class="container">
 		<div class="container">
 			<div class="jumbotron">
-				<h1>Bootstrap Tutorial</h1> 
-				<p>Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile-first projects on the web.</p> 
+				<h1><?php echo get_banner(); ?></h1> 
+				<p><?php echo get_subbanner(); ?></p> 
 			</div>
 		</div>
 		<div class="container">
